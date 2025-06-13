@@ -23,7 +23,7 @@ def show_databases():
     for (db,) in cursor1:
         print(f"– {db}")
 
-    cursor1.close()
+    #cursor1.close()
 
 
 def show_tables():
@@ -39,13 +39,32 @@ def show_tables():
             print(f"– {table}")
     except mysql.connector.Error as err:
         print(f"Fehler: {err}")
+    #finally:
+        #cursor2.close()
+def select_table():
+    tab_name = input("Welche Tabelle möchtest du dir anschauen?\n-> ")
+    cursor3 = conn.cursor(dictionary=True)
+
+    try:
+        cursor3.execute(f"SELECT * FROM `{tab_name}`")
+        ergebnisse = cursor3.fetchall()
+
+        spalten = [i[0] for i in cursor3.description]
+        print(f"\n📂 Inhalt der Tabelle `{tab_name}`:")
+        print(" | ".join(spalten))  # Kopfzeile
+        print("-" * 50)
+
+        for zeile in ergebnisse:
+            print(" | ".join(str(wert) for wert in zeile))
+
+    except mysql.connector.Error as err:
+        print(f"Fehler: {err}")
+
     finally:
-        cursor2.close()
-
-
+        cursor3.close()
 # Ablauf:
 show_databases()
 show_tables()
-
+select_table()
 # Verbindung erst ganz am Ende schließen
 conn.close()
